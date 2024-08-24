@@ -1,0 +1,129 @@
+// query to fetchAllReviews 
+query FetchAllReviews {
+  fetchAllReviews {
+    rating
+    id
+    game_id
+    content
+    author_id
+  }
+}
+
+
+//fetch all review with the additional filters (not required )
+query FetchAllReviews($filters: ReviewFilter) {
+  fetchAllReviews(filters: $filters) {
+    rating
+    id
+    game_id
+    content
+    author_id
+  }
+}
+ params for the query above
+{
+    "filters": {
+    "ratingGreaterThan": 8,
+    "contentContains": "a"
+  }
+}
+
+
+// nested query for getting the games first by ID and then the reviews of the game 
+query game_Query( $getAuthorByIdId: ID!) {
+  getGameById(id: $getAuthorByIdId) {
+    id, platform title
+    reviews {
+      rating
+      content
+      game_id
+    }
+  }
+}
+
+
+// nested query for getting the author first by ID and then the reviews of that author 
+query author_Query {
+  getAuthorById(id:1) {
+    id, name, verified
+    reviews {
+      rating
+      content
+      game_id
+    }
+  }
+}
+
+// nested query for getting the reviews first by ID and then the game details of which the review is,  and then the others reviews the for the same game
+query reviewQuery {
+  getReviewById(id: 1) {
+    id
+    content
+    rating
+    game_id
+    author_id
+   game {
+     id
+     title
+     platform
+     reviews {
+       id
+       content
+       rating
+       game_id
+       author_id
+       
+     }
+   }
+   
+  }
+}
+
+// nested query for getting the reviews first by ID and then the game details of whichs the review is,  details of the author who wrote it 
+
+query reviewQuery2 {
+  getReviewById(id: 5) {
+    id
+    content
+    rating
+    game_id
+    author_id
+   game {
+     id
+     title
+     platform
+   }
+   author {
+     id
+     name
+     verified
+   }
+  }
+}
+
+
+// delte game mutation
+mutation ($deleteGameId: ID!) {
+  deleteGame(id: $deleteGameId) {
+    id
+    title
+    platform
+  }
+}
+
+
+
+//create game mutation
+mutation CreateNewGame($newGame: CreateNewGameInput!) {
+  createNewGame(newGame: $newGame) {
+    id,title,platform
+  }
+}
+
+
+//updateGame mutation
+
+mutation updateGame( $updateGame: updateGameInput!){
+  updateTheGame(id:6, updateGame: $updateGame) {
+    id, title, platform, isDeleted
+  }
